@@ -31,8 +31,8 @@ La libreria KDL ha bisogno di conoscere la struttura cinematica del robot. La ca
 
 Nel file urdf, che è strutturato come un file xml, è possibile specificare i giunti e i link del robot tramite i seguenti elementi:
 \begin{itemize}
-	\item \tl link name="xxx"\tr...\tl /link\tr, che descrive un link;
-	\item \tl joint name="yyy" type="zzz"\tr...\tl /joint\tr, che descrive un giunto; il robot utilizzato è costituito da sei giunti di rotazione, per cui il tipo dei giunti è definito come "revolute".
+	\item \tl link name="xxx"\tr...\tl /link\tr, descrive un link;
+	\item \tl joint name="yyy" type="zzz"\tr...\tl /joint\tr, descrive un giunto; il robot utilizzato è costituito da sei giunti di rotazione, per cui il tipo dei giunti è definito come "revolute".
 \end{itemize}
 All'interno degli elementi è possibile poi specificare diverse caratteristiche tra le quali (elenco completo reperibile al link \url{http://wiki.ros.org/urdf/XML/joint}):
 \begin{itemize}
@@ -44,7 +44,7 @@ Per descrivere il robot utilizzato, sono quindi stati definiti sei giunti di rot
 
 \clearpage
 
-\section{KDL Paser}
+\section{KDL paser}
 
 \todo{desrivere il metodo loadChainFromUrdf per inizializzare la libreria}
 
@@ -67,9 +67,13 @@ Nelle figure \ref{fig:base_frame} e \ref{fig:tool_frame} sono riportati i sistem
 \end{figure}
 
 \section{Cinematica diretta e inversa}
+\todo{spiefare joint to cart e cart to join e metodi associati}
 \section{Traiettoria lineare}
-\todo{Descriviamo magari qui il funzionamento base delle funzioni e poi facciamo una sezione con invece la definizione di come sono stati introdotti in star quindi plugin e componenti?}
+\todo{spiegare la funzione path line e i metodi associati}
 
-\chapter{Implementazione in star} \todo{nome solo per far capire la sezione (es diagramma componeti)}
+
+\chapter{Implementazione in STAR} \todo{nome solo per far capire la sezione (es diagramma componeti)}
 \section{Plugin: PluginArmPRob3Kinematics}
+\todo{descrivere funzioni plugin richiamando le funzioni della libreria}
 \section{Componente: ArmDriver e ToolInput}
+\todo{funzionamento dei due componenti/messaggi scambiati}
