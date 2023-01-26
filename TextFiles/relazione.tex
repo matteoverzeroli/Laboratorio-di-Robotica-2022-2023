@@ -80,7 +80,28 @@ La classe \texttt{KDL::ChainIkSolverPos\_NR\_JL} fornisce il metodo \\
 \todo{spiegare la funzione path line e i metodi associati}
 
 \chapter{Implementazione in STAR} \todo{nome solo per far capire la sezione (es diagramma componeti)}
+
+In figura \ref{fig:star_diagram} è riportato il diagramma dei componenti STAR dell'applicazione. 
+
+\begin{figure}[tbh]
+	\centering
+	\includegraphics[width=1\linewidth]{./ImageFiles/publish_subscribe_architecture.drawio.pdf}
+	\caption{Diagramma dei componenti STAR.}
+	\label{fig:star_diagram}
+\end{figure}
+
+I \textit{Component} dell'architettura sviluppata sono due:
+\begin{itemize}
+	\item \textit{ArmDriver}: implementa due attività, la \textit{JointControlAcivity} che si occupa di comunicare con il robot fornendogli i comandi di movimento e ricevendo la posizione dei giunti e la \textit{ToolControlActivity} che si occupa di elaborare la traiettoria lineare da fornire al robot. 
+	\item \textit{ToolInput}: implementa l'attività \textit{ToolIinputCommandActivity} che si occupa di inviare la posizione che il tool deve raggiungere.
+\end{itemize}
+\noindent
+L'attività \textit{ToolControlActivity} utilizza le funzionalità della classe \textit{PluginArmPRob3Kinematics}, la quale fornisce le funzioni per eseguire la cinematica diretta, la cinematica inversa ed il calcolo di un percorso lineare utilizzando la libreria \textit{OROCOS}.
+
+
 \section{Plugin: PluginArmPRob3Kinematics}
 \todo{descrivere funzioni plugin richiamando le funzioni della libreria}
+Il plugin \textit{PluginArmPRob3Kinematics} implementa l'interfaccia \textit{ArmKinematicsInterface} e fornisce le funzionalità per il calcolo della cinematica diretta, della cinematica inversa e per la computazione di un percorso lineare. Per fare ciò utilizza la libreria \textit{OROCOS KDL}. 
+\todo{Mettere diagramma della classe uml }
 \section{Componente: ArmDriver e ToolInput}
 \todo{funzionamento dei due componenti/messaggi scambiati}
