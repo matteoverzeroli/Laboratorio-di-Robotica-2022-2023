@@ -122,7 +122,7 @@ Rappresentano i limiti inferiori e superiori dei giunti del robot. Vengono estra
 \paragraph{bool loadChainFromUrdf()}
 Funzione che si occupa di estrarre la \texttt{KDL::Chain} ed i limiti dei giunti a partire dall'urdf del robot.
 
-\paragraph{bool computeDirectKinematics(std::vector<double> \&joint\_state, Transform3D \&toolPose)}
+\paragraph{bool computeDirectKinematics(std::vector\tl double\tr \&joint\_state, Transform3D \&toolPose)}
 
 Funzione che si occupa di eseguire il calcolo della cinematica diretta. Utilizza la funzione \texttt{KDL::ChainFkSolverPos\_recursive::JntToCart(const JntArray \&in, Frame \&out)} per eseguire tale calcolo.  \\
 \textbf{\textit{Parametri:}}
