@@ -44,9 +44,8 @@ Per descrivere il robot utilizzato sono quindi stati definiti sei giunti di rota
 
 \clearpage
 
-\section{KDL Paser}
-A partire dalla descrizione del robot contenuta nel file urdf, è necessario costruire una struttura dati di tipo \texttt{KDL::Chain}, utilizzata dalla libreria Orocos KDL per i calcoli cinematici. Per fare ciò, si è utilizzato la libreria KDL Parser. Inizialmente, viene eseguito il parsing del file urdf tramite la funzione \texttt{urdf::parseURDFFile(path\_urdf)} che restituisce un oggetto di tipo \texttt{urdf::ModelInterfaceSharedPtr} che rappresenta il modello del file urdf. Se questa operazione viene effettuata correttamente, l'oggetto appena creato viene utilizzato per generare un oggetto di tipo \texttt{KDL::Tree} tramite la funzione \texttt{kdl\_parser::treeFromUrdfModel} che rappresenta la struttura del robot. Se l'oggetto viene creato correttamente, si utilizza il metodo \texttt{my\_tree.getChain("base\_link", "last\_link", m\_chain)} per definire un oggetto di tipo di tipo \texttt{KDL::Chain} che rappresenta la catena cinematica del robot dal link "base\_link", il cui nome viene specificato come primo parametro della funzione, fino al link finale "last\_link", specificato come secondo parametro e che corrisponde al centro di presa.
-
+\section{KDL Paser} \label{cap_kdlparser}
+A partire dalla descrizione del robot contenuta nel file urdf, è necessario costruire una struttura dati di tipo \texttt{KDL::Chain}, utilizzata dalla libreria Orocos KDL per i calcoli cinematici. Per fare ciò, si è utilizzato la libreria KDL Parser. Inizialmente, viene eseguito il parsing del file urdf tramite la funzione \texttt{urdf::parseURDFFile(path\_urdf)} che restituisce un oggetto di tipo \texttt{urdf::ModelInterfaceSharedPtr} che rappresenta il modello del file urdf. Se questa operazione viene effettuata correttamente, l'oggetto appena creato viene utilizzato per generare un oggetto di tipo \texttt{KDL::Tree} tramite la funzione \texttt{kdl\_parser::treeFromUrdfModel} che rappresenta la struttura del robot. Se l'oggetto viene creato correttamente, si utilizza il metodo \texttt{my\_tree.getChain("base\_link", "last\_link", m\_chain)} per definire un oggetto di tipo di tipo \texttt{KDL::Chain} che rappresenta la catena cinematica del robot dal link "base\_link", il cui nome viene specificato come primo parametro della funzione, fino al link finale "last\_link", specificato come secondo parametro e che corrisponde al centro di presa. Un oggetto di tipo \texttt{KDL::Chain} è costiturito da \texttt{KDL::Segment}, dove un segmento rappresenta un link con un giunto e con due collegamenti alle estremità con altri segmenti. 
 Successivamente, dall'oggetto \texttt{KDL::Chain} vengono estratti i limiti dei giunti (in termini di angoli minimi e massimi raggiungibili dai giunti). Essi vengono salvati in un array di tipo \texttt{KDL::JntArray} e saranno utilizzati nel calcolo della cinematica inversa.
 
 \section{Sistemi di riferimento del robot}
@@ -68,7 +67,7 @@ Nelle figure \ref{fig:base_frame} e \ref{fig:tool_frame} sono riportati i sistem
 
 \clearpage
 
-\section{Cinematica diretta}
+\section{Cinematica diretta} \label{cap_fk}
 La cinematica diretta permette di calcolare la posizione e l'orientamento dell'end-effector a partire dal valore dei giunti. La libreria Orocos KDL mette a disposizione il metodo \\ \centerline{\texttt{int KDL::ChainFkSolverPos\_recursive::JntToCart(const JntArray\& q\_in, Frame\& p\_out)}} \\ che riceve in ingresso un vettore \textit{q\_in} di tipo \texttt{KDL::JntArray} che contiene la configurazione dei giunti e restituisce la posizione dell'end-effector rispetto al sistema del riferimento della base tramite l'oggetto \textit{p\_out} di tipo \texttt{KDL::Frame}, che rappresenta una rototraslazione nello spazio 3D. Il valore intero restituito indica l'esito del calcolo della cinematica diretta (zero se il calcolo è stato effettuato con successo). Questo metodo appartiene alla classe \texttt{KDL::ChainFkSolverPos\_recursive} che implementa un algoritmo ricorsivo per il calcolo della cinematica diretta. Il costruttore di questa classe \\ \centerline{\texttt{ChainFkSolverPos\_recursive (const Chain \&chain)}} \\ richiede come parametro un oggetto \texttt{KDL::Chain}.
 
 \section{Cinematica inversa}
@@ -80,10 +79,9 @@ La classe \texttt{KDL::ChainIkSolverPos\_NR\_JL} fornisce il metodo \\
 \section{Traiettoria lineare}
 \todo{spiegare la funzione path line e i metodi associati}
 
-\chapter{Implementazione in STAR} \todo{nome solo per far capire la sezione (es diagramma componeti)}
+\chapter{Implementazione in STAR}
 
-In figura \ref{fig:star_diagram} è riportato il diagramma dei componenti STAR dell'applicazione. 
-
+In figura \ref{fig:star_diagram} è riportato il diagramma dei componenti inseriti nel framework STAR. 
 \begin{figure}[tbh]
 	\centering
 	\includegraphics[width=1\linewidth]{./ImageFiles/publish_subscribe_architecture.drawio.pdf}
@@ -91,20 +89,19 @@ In figura \ref{fig:star_diagram} è riportato il diagramma dei componenti STAR d
 	\label{fig:star_diagram}
 \end{figure}
 
-I \textit{Component} dell'architettura sviluppata sono due:
+\noindent
+Sono stati sviluppati due \textit{Component}:
 \begin{itemize}
-	\item \textit{ArmDriver}: implementa due attività, la \textit{JointControlAcivity} che si occupa di comunicare con il robot fornendogli i comandi di movimento e ricevendo la posizione dei giunti e la \textit{ToolControlActivity} che si occupa di elaborare la traiettoria lineare da fornire al robot. 
-	\item \textit{ToolInput}: implementa l'attività \textit{ToolIinputCommandActivity} che si occupa di inviare la posizione che il tool deve raggiungere.
+	\item \textit{ArmDriver}: implementa l'attività \textit{JointControlAcivity} che si occupa di comunicare con il robot inviandogli i comandi di movimento e ricevendo la posizione corrente dei giunti e la \textit{ToolControlActivity} che si occupa di elaborare la traiettoria lineare che l'end-effector dovrà seguire. 
+	\item \textit{ToolInput}: implementa l'attività \textit{ToolIinputCommandActivity} che si occupa di inviare la posizione target che il tool deve raggiungere a partire dalla posizione corrente.
 \end{itemize}
 \noindent
-L'attività \textit{ToolControlActivity} utilizza le funzionalità della classe \textit{PluginArmPRob3Kinematics}, la quale fornisce le funzioni per eseguire la cinematica diretta, la cinematica inversa ed il calcolo di un percorso lineare utilizzando la libreria \textit{OROCOS}.
+L'attività \textit{ToolControlActivity} utilizza le funzionalità della classe \textit{PluginArmPRob3Kinematics}, la quale fornisce le funzioni per eseguire la cinematica diretta, la cinematica inversa ed il calcolo di un percorso lineare utilizzando la libreria Orocos KDL.
 
 
 \section{Plugin: PluginArmPRob3Kinematics}
-\todo{descrivere funzioni plugin richiamando le funzioni della libreria}
-Il plugin \textit{PluginArmPRob3Kinematics} implementa l'interfaccia \textit{ArmKinematicsInterface} e fornisce le funzionalità per il calcolo della cinematica diretta, della cinematica inversa e per la computazione di un percorso lineare. Per fare ciò utilizza la libreria \textit{Orocos KDL}. 
+Il plugin \textit{PluginArmPRob3Kinematics} implementa l'interfaccia \textit{ArmKinematicsInterface} e fornisce le funzionalità per il calcolo della cinematica diretta, della cinematica inversa e per la computazione di un percorso lineare. Per fare ciò utilizza le funzioni della libreria Orocos KDL descritte nella sezione precedente. 
 In figura \ref{fig:plugin_uml} è riportato il diagramma della classe in questione.
-
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.5\linewidth]{./ImageFiles/PluginArmPRob3Kinematics.drawio.pdf}
@@ -113,25 +110,24 @@ In figura \ref{fig:plugin_uml} è riportato il diagramma della classe in questio
 \end{figure}
 
 \paragraph{KDL::Chain m\_chain}
-Oggetto che incapsula la struttura cinematica seriale del robot. È costituita da segmenti.
+Oggetto che incapsula la catena cinematica del robot.
 
 \paragraph{KDL::JntArray q\_min, q\_max}
-Rappresentano i limiti inferiori e superiori dei giunti del robot. Vengono estratti dall'urdf.
+Rappresentano i limiti inferiori e superiori dei valori degli angoli dei giunti del robot estratti dall'urdf.
 
 \paragraph{bool loadChainFromUrdf()}
-Funzione che si occupa di estrarre la \texttt{KDL::Chain} ed i limiti dei giunti a partire dall'urdf del robot.
+Funzione che si occupa di estrarre la \texttt{KDL::Chain} ed i limiti dei giunti a partire dall'urdf del robot attraverso le funzioni fornite dalla libreria KDL Parser descritte nella sezione precedente (cap.\ref{cap_kdlparser}).
 
 \paragraph{bool computeDirectKinematics(std::vector\tl double\tr \&joint\_state, Transform3D \&toolPose)}
-
-Funzione che si occupa di eseguire il calcolo della cinematica diretta. Utilizza la funzione \texttt{KDL::ChainFkSolverPos\_recursive::JntToCart(const JntArray \&in, Frame \&out)} per eseguire tale calcolo.  \\
+Funzione che si occupa di eseguire il calcolo della cinematica diretta utilizzando la funzione \texttt{KDL::ChainFkSolverPos\_recursive::JntToCart(const JntArray \&q\_in, Frame \&q\_out)} (cap.\ref{cap_fk})\\
 \textbf{\textit{Parametri:}}
 \begin{itemize}
-	\item \texttt{joint\_state}: input, valore dei giunti di cui si vuole calcolare la matrice di rototraslazione; 
-	\item \texttt{toolPose}: output, oggetto che rappresenta la matrice di rototraslazione.
+	\item \texttt{joint\_state}: input, valore dei giunti da cui si vuole calcolare la posizione dell'end-effector; 
+	\item \texttt{toolPose}: output, oggetto che rappresenta la posizione dell'end-effector rispetto alla base del robot.
 \end{itemize}
 \textbf{\textit{Return:}}
 \begin{itemize}
-	\item \texttt{true}: se la cinematica diretta è stata calcolata senza errori;
+	\item \texttt{true}: la cinematica diretta è stata calcolata senza errori;
 	\item \texttt{false}: altrimenti.
 \end{itemize}
 
