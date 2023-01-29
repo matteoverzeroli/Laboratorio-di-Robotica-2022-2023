@@ -83,6 +83,9 @@ I parametri \texttt{F_base_start} e \texttt{F_base_end} rappresentano i frame di
 Il parametro \texttt{orient} che fa riferimento alla classe \texttt{ RotationalInterpolation} ed ha il compito di specificare la parte relativa alle rotazioni in una traiettoria geometrica, la documentazione di Orocos KDL suggerisce di inizializzare questo parametro con il metodo \texttt{RotationalInterpolation_SingleAxis()} in quanto altre implementazioni non sono ancora disponibili, inoltre ha il vantaggio di essere indipendente dal frame nel quale si espreime il path
 Il parametro \texttt{eqradious} è un \texttt{double} che rappresente l' equivalent radious, questo serve per rapportare la rotazione alla traslazione in una traiettoria, in modo tale quindi da essere in grado di riuscire a compiere entrambe nello stesso arco di tempo
 Infine l'ultim parametro \texttt{bool _aggregate=true} è un \texttt{bool} sempre \texttt{true}
+Per il progetto sono stati utilizzati i seguenti metodi della classe \texttt{KDL::Path_Line}:
+\texttt{ double KDL::Path_Line::PathLength()}: questo metodo ritorna la lunghezza della path con dimensione LENGTH, questo parametro non è sempre da considerarsi una lunghezza dal punto di vista fisico, inparticolare nel caso in cui ci sia una prevalente componente di rotazione
+\texttt{ Frame KDL::Path_Line::Pos(double s)}: questo metodo ritorna il \texttt{Frame} sitante \texttt{s} dal frame di partenza, ciò ci permette di avere una serie di waypoints all'interno della traiettoria lineare implementando un semplice ciclo for
 
 \chapter{Implementazione in STAR}
 
