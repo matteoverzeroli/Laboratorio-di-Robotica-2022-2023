@@ -77,7 +77,12 @@ La classe \texttt{KDL::ChainIkSolverPos\_NR\_JL} fornisce il metodo \\
 \texttt{int KDL::ChainIkSolverPos\_NR\_JL::CartToJnt(const JntArray \&\ q\_init, const Frame \&\ p\_in, JntArray \&\	q\_out)} \\ che, data la posizione dell'end-effector tramite il parametro \textit{p\_in}, restituisce i valori dei giunti calcolati nella variabile \textit{q\_out}. Il parametro \textit{q\_init} rappresenta la configurazione iniziale dei giunti dalla quale il metodo iterativo inizia la ricerca della soluzione della cinematica inversa e può influenzare la configurazione finale dei giunti. Il valore intero restituito indica l'esito dell'operazione (zero se il calcolo è andato a buon fine).
 
 \section{Traiettoria lineare}
-\todo{spiegare la funzione path line e i metodi associati}
+La classe \texttt{KDL::Path_Line} che estende \texttt{KDL::Path} ci permette di avere un oggetto che rappresenta un Path lineare
+Inizializzazione classe \texttt{Path_Line (const Frame &F_base_start, const Frame &F_base_end, RotationalInterpolation *orient, double eqradius, bool _aggregate=true)}
+I parametri \texttt{F_base_start} e \texttt{F_base_end} rappresentano i frame di partenza e d'arrivo 
+Il parametro \texttt{orient} che fa riferimento alla classe \texttt{ RotationalInterpolation} ed ha il compito di specificare la parte relativa alle rotazioni in una traiettoria geometrica, la documentazione di Orocos KDL suggerisce di inizializzare questo parametro con il metodo \texttt{RotationalInterpolation_SingleAxis()} in quanto altre implementazioni non sono ancora disponibili, inoltre ha il vantaggio di essere indipendente dal frame nel quale si espreime il path
+Il parametro \texttt{eqradious} è un \texttt{double} che rappresente l' equivalent radious, questo serve per rapportare la rotazione alla traslazione in una traiettoria, in modo tale quindi da essere in grado di riuscire a compiere entrambe nello stesso arco di tempo
+Infine l'ultim parametro \texttt{bool _aggregate=true} è un \texttt{bool} sempre \texttt{true}
 
 \chapter{Implementazione in STAR}
 
