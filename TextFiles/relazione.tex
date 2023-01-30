@@ -77,18 +77,14 @@ La classe \texttt{KDL::ChainIkSolverPos\_NR\_JL} fornisce il metodo \\
 \texttt{int KDL::ChainIkSolverPos\_NR\_JL::CartToJnt(const JntArray \&\ q\_init, const Frame \&\ p\_in, JntArray \&\	q\_out)} \\ che, data la posizione dell'end-effector tramite il parametro \textit{p\_in}, restituisce i valori dei giunti calcolati nella variabile \textit{q\_out}. Il parametro \textit{q\_init} rappresenta la configurazione iniziale dei giunti dalla quale il metodo iterativo inizia la ricerca della soluzione della cinematica inversa e può influenzare la configurazione finale dei giunti. Il valore intero restituito indica l'esito dell'operazione (zero se il calcolo è andato a buon fine).
 
 \section{Traiettoria lineare}
-La classe \texttt{KDL::Path_Line} che estende \texttt{KDL::Path} ci permette di avere un oggetto che rappresenta un Path lineare
-Inizializzazione classe \texttt{Path_Line (const Frame &F_base_start, const Frame &F_base_end, RotationalInterpolation *orient, double eqradius, bool _aggregate=true)}
-I parametri \texttt{F_base_start} e \texttt{F_base_end} rappresentano i frame di partenza e d'arrivo 
-Il parametro \texttt{orient} che fa riferimento alla classe \texttt{ RotationalInterpolation} ed ha il compito di specificare la parte relativa alle rotazioni in una traiettoria geometrica, la documentazione di Orocos KDL suggerisce di inizializzare questo parametro con il metodo \texttt{RotationalInterpolation_SingleAxis()} in quanto altre implementazioni non sono ancora disponibili, inoltre ha il vantaggio di essere indipendente dal frame nel quale si espreime il path
-Il parametro \texttt{eqradious} è un \texttt{double} che rappresente l' equivalent radious, questo serve per rapportare la rotazione alla traslazione in una traiettoria, in modo tale quindi da essere in grado di riuscire a compiere entrambe nello stesso arco di tempo
-Infine l'ultim parametro \texttt{bool _aggregate=true} è un \texttt{bool} sempre \texttt{true}
-Per il progetto sono stati utilizzati i seguenti metodi della classe \texttt{KDL::Path_Line}:
-\texttt{ double KDL::Path_Line::PathLength()}: questo metodo ritorna la lunghezza della path con dimensione LENGTH, questo parametro non è sempre da considerarsi una lunghezza dal punto di vista fisico, inparticolare nel caso in cui ci sia una prevalente componente di rotazione
-\texttt{ Frame KDL::Path_Line::Pos(double s)}: questo metodo ritorna il \texttt{Frame} sitante \texttt{s} dal frame di partenza, ciò ci permette di avere una serie di waypoints all'interno della traiettoria lineare implementando un semplice ciclo for
+La classe \texttt{KDL::Path\_Line}, che estende \texttt{KDL::Path}, permette di creare un oggetto che rappresenta un percorso lineare da una posizione iniziale ad una finale. Di seguito si riporta il costruttore di un oggetto di tipo \texttt{KDL::Path\_Line}: \\ \texttt{Path\_Line (const Frame \&F\_base\_start, const Frame \&F\_base\_end, RotationalInterpolation *orient, double eqradius, bool \_aggregate=true)}.\\ I parametri \texttt{F\_base\_start} e \texttt{F\_base\_end} rappresentano i sistemi di riferimento della posizione iniziale e finale del percorso lineare che si vuole calcolare. In questo progetto, esse coincideranno con la posizione iniziale e finale dell'end-effector. Il parametro \textit{orient} di tipo \texttt{KDL::RotationalInterpolation} è utilizzato dalla classe per rappresentare la rotazione associata a un percorso geometrico. La documentazione della libreria suggerisce di inizializzare questo parametro attraverso il metodo \\ \centerline{\texttt{KDL::RotationalInterpolation\_SingleAxis()}} \\ che ha il vantaggio di essere indipendente dal sistema di riferimento nel quale si esprime il percorso. Il parametro \textit{eqradious} è di tipo \texttt{double} e rappresenta l'\textit{equivalent radious}. Questo parametro serve a comparare le rotazioni con le traslazioni, definendo la "quantità di movimento" di una rotazione come lo spazio percorso da un punto a distanza \textit{eqradious} dall'asse di rotazione. Nel progetto, questo parametro è stato valorizzato con il valore arbitrario 1. Tuttavia, sviluppi futuri richiederanno di approfondire il valore ottimo da assegnare a questo parametro.
+Per il progetto sono stati utilizzati anche i seguenti metodi della classe \texttt{KDL::Path\_Line}:
+\begin{itemize}
+	\item \texttt{double KDL::Path\_Line::PathLength()}: restituisce la lunghezza del percorso. Tuttavia, la lunghezza restituita non è da considerarsi sempre come una lunghezza fisica, ad esempio quando la componente di rotazione è dominante;
+	\item \texttt{Frame KDL::Path\_Line::Pos(double s)}: ritorna il sistema di riferimento lungo il percorso alla lunghezza \textit{s} attuale. Questo metodo permette di ricavare i \textit{waypoints} all'interno della traiettoria lineare.
+\end{itemize}
 
 \chapter{Implementazione in STAR}
-
 In figura \ref{fig:star_diagram} è riportato il diagramma dei componenti inseriti nel framework STAR. 
 \begin{figure}[tbh]
 	\centering
@@ -105,7 +101,6 @@ Sono stati sviluppati due \textit{Component}:
 \end{itemize}
 \noindent
 L'attività \textit{ToolControlActivity} utilizza le funzionalità della classe \textit{PluginArmPRob3Kinematics}, la quale fornisce le funzioni per eseguire la cinematica diretta, la cinematica inversa ed il calcolo di un percorso lineare utilizzando la libreria Orocos KDL.
-
 
 \section{Plugin: PluginArmPRob3Kinematics}
 Il plugin \textit{PluginArmPRob3Kinematics} implementa l'interfaccia \textit{ArmKinematicsInterface} e fornisce le funzionalità per il calcolo della cinematica diretta, della cinematica inversa e per la computazione di un percorso lineare. Per fare ciò utilizza le funzioni della libreria Orocos KDL descritte nella sezione precedente. 
@@ -138,7 +133,7 @@ Funzione che si occupa di eseguire il calcolo della cinematica diretta utilizzan
 	\item \texttt{true}: la cinematica diretta è stata calcolata senza errori;
 	\item \texttt{false}: altrimenti.
 \end{itemize}
-
+\todo{terminare descrizione plugin}
 
 \section{Componente: ArmDriver e ToolInput}
 \todo{funzionamento dei due componenti/messaggi scambiati}
