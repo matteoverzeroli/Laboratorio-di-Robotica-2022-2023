@@ -173,7 +173,7 @@ Funzione che si occupa di eseguire il calcolo della cinematica inversa utilizzan
 
 
 \paragraph{bool computeLinearTrajectory(Transform3D \&start, Transform3D \&end, JointTrajectory \&trajectory, std::vector\tl double\tr \&lastJointState))}
-Funzione tramite cui è possibile computare, a partire da un punto iniziale ed un punto finale nello spazio, un percorso lineare da far eseguire al robot (cap.\ref{cap_fk}). \\
+Funzione tramite cui è possibile computare, a partire da un punto iniziale ed un punto finale nello spazio, un percorso lineare da far eseguire al robot (cap.\ref{cap_fk}). In figura \ref{fig:algorithm} è mostrato il funzionamento dell'algoritmo che computa il percorso lineare. Si osservi che, nel caso in cui non la cinematica inversa non venga calcolata correttamente per un punto lungo il percorso, l'algoritmo riparte dall'inizio perturbando in modo incrementale il valore iniziale dei giunti. \\
 \textbf{\textit{Parametri:}}
 \begin{itemize}
 	\item \texttt{start}: input, oggetto che rappresenta il primo punto della retta;
@@ -188,5 +188,12 @@ Funzione tramite cui è possibile computare, a partire da un punto iniziale ed u
 \end{itemize}
 
 
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.8\linewidth]{./ImageFiles/ComputeLinearTrajectory.drawio.pdf}	\caption{Diagramma di flusso che mostra il funzionamento dell'algoritmo che calcola il percorso lineare.}
+	\label{fig:algorithm}
+\end{figure}
+
+\clearpage
 \section{Componente: ArmDriver e ToolInput}
 \todo{funzionamento dei due componenti/messaggi scambiati}
