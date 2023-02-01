@@ -197,5 +197,19 @@ Metodo tramite cui è possibile computare, a partire da un punto iniziale ed un 
 \end{figure}
 \clearpage
 
-\section{Componente: ArmDriver e ToolInput}
-\todo{funzionamento dei due componenti/messaggi scambiati}
+\section{Componenti: ArmDriver e ToolInput}
+La comunicazione con il robot è gestita dal componente \textit{ArmDriver} che implementa due attività: la \textit{JointControlActivity} e la \textit{ToolControlActivity}. Queste due attività vengono inizializzate e registrate nel metodo \texttt{ArmDriver::startup()} della classe \texttt{ArmDriver}. 
+
+L'attività \textit{JointControlActivity} è una \textit{periodic activity}, che riceve una traiettoria dal topic \textit{joint\_trajectory} e pubblica lo stato corrente dei giunti sul topic \textit{joint\_state}. Inoltre, si interfaccia con la \textit{functionality} \texttt{ArmInterface} che si occupa della comunicazione con il nodo ROS integrato nel robot. Quando viene pubblicata una traiettoria, viene chiamata la funzione di callback \texttt{JointControlActivity::jointTrajectoryCallback(VariantActivity* va)}, che si occupa di estrarre ogni punto di passaggio del percorso ricevuto e inviarlo al robot tramite l'interfaccia \texttt{ArmInterface}. 
+
+L'attività \textit{ToolControlActivity} è una \textit{sporadic activity} che riceve la posizione target dell'end-effector sul topic \textit{tool\_command} e lo stato attuale dei giunti sul topic \textit{joint\_state} mentre pubblica la traiettoria calcolata sul topic \textit{joint\_trajectory}. Inoltre, si interfaccia con la \textit{functionality} \texttt{KinematicsInterface} che permette di richiamare le funzioni presenti nel plugin \texttt{PluginArmPRob3Kinematics}. Ogni volta che l'attività riceve lo stato dei giunti dalla \textit{JointControlActivity} li memorizza nella variabile \textit{std::vector\tl double\tr lastJointState}. Invece, quando riceve dal componente \textit{ToolInput} la posizione target dell'end-effector viene richiamata la funzione di callback \texttt{ToolControlActivity::toolCommandCallback (VariantActivity *va)} che si occupa di pubblicare la traiettoria. In particolare, inizialmente viene calcolata la posizione attuale dell'end-effector grazie alla cinematica diretta calcolata a partire dall'ultimo stato dei giunti ricevuto. Se il calcolo va a buon fine e il comando ricevuto richiede il calcolo di una traiettoria lineare, si procede al calcolo del percorso lineare dalla posizione attuale calcolata e la posizione target ricevuta (tramite la funzione \texttt{computeLinearTrajectory}). Se viene calcolato in modo corretto un percorso lineare, si procede alla pubblicazione della traiettoria sul topic \textit{joint\_trajectory}, che sarà poi ricevuta ed eseguita dalla \textit{JointControlActivity}.
+
+Il componente \textit{ToolInput} si occupa invece di indicare all'attività \textit{ToolControlActivity} la posizione target che l'end-effector deve raggiungere e implementa l'attività \textit{ToolInputCommandActivity}.
+
+L'attività \textit{ToolInputCommandActivity} è una \textit{sporadic activity} che si occupa di leggere la proprietà \texttt{ToolEnd} definita nel file di configurazione del componente. Questa proprietà definisce la posizione target dell'end-effector tramite il seguente formato:
+\begin{lstlisting}[language=xml]
+	<ToolEnd>
+		Value>x y z roll pitch yaw</Value>
+	</ToolEnd>,
+\end{lstlisting}
+dove \textit{x, y, z} sono espressi in metri mentre \textit{roll, pitch, yaw} sono espressi in radianti. Una volta letta, la posizione sarà inserita in un \texttt{star::manipulation\_msgs::ToolMotionCommand} e sarà pubblicata sul topic \textit{tool\_command}. Essa verrà ricevuta dall'attività \textit{ToolControlActivity} che procederà al calcolo della traiettoria.
