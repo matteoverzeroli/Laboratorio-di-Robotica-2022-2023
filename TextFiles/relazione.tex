@@ -37,7 +37,7 @@ All'interno degli elementi è possibile poi specificare diverse caratteristiche 
 \begin{itemize}
 	\item  \tl parent link="xxx"/\tr\ e \tl child link="yyy"/\tr\ indicano rispettivamente il link padre e il link figlio di un giunto;
 	\item \tl axis xyz="0 1 0"/\tr\ indica l'asse di rotazione del giunto;
-	\item  \tl origin xyz="0 0 0.29"/\tr\ indica la rototraslazione tra il link padre e il link figlio.
+	\item  \tl origin xyz="0 0 0.29"/\tr\ indica la rototraslazione tra il link padre e il link figlio (in radianti).
 	\item \tl limit effort="1.09" lower="-2.94960643587" upper="2.9670597283903604" velocity="0.8290313946973065"/\tr \ descrive i limiti di velocità, angolo massimo e minimo ed effort di un giunto;
 \end{itemize}
 Per descrivere il robot utilizzato sono quindi stati definiti sei giunti di rotazione (tre con asse di rotazione lungo l'asse z e tre con asse di rotazione lungo l'asse y) e sette link dalla base del robot fino al centro di presa. Sono stati poi aggiunti un giunto di tipo \textit{fisso} e un link terminale per rappresentare correttamente il centro di presa.
