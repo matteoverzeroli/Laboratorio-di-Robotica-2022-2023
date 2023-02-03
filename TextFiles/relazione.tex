@@ -25,7 +25,7 @@ La libreria Orocos KDL ha bisogno di conoscere la struttura cinematica del robot
 \begin{figure}[tbh]
 	\centering
 	\includegraphics[width=0.3\linewidth]{./OtherFiles/p_rob.pdf}
-	\caption{Catena cinematica descritta dal file urdf.}
+	\caption{Catena cinematica descritta nel file urdf.}
 	\label{fig:urdf_prob3}
 \end{figure}
 Nel file urdf, che è strutturato come un file xml, è possibile specificare i giunti e i link del robot tramite i seguenti elementi:
@@ -37,8 +37,8 @@ All'interno degli elementi è possibile poi specificare diverse caratteristiche 
 \begin{itemize}
 	\item  \tl parent link="xxx"/\tr\ e \tl child link="yyy"/\tr\ indicano rispettivamente il link padre e il link figlio di un giunto;
 	\item \tl axis xyz="0 1 0"/\tr\ indica l'asse di rotazione del giunto;
-	\item  \tl origin xyz="0 0 0.29"/\tr\ indica la rototraslazione tra il link padre e il link figlio (in radianti).
-	\item \tl limit effort="1.09" lower="-2.94960643587" upper="2.9670597283903604" velocity="0.8290313946973065"/\tr \ descrive i limiti di velocità, angolo massimo e minimo ed effort di un giunto;
+	\item  \tl origin xyz="x y z r p y"/\tr\ indica la rototraslazione tra il link padre e il link figlio (valori x, y, z espressi in metri e r, p ,y in radianti).
+	\item \tl limit effort="1.09" lower="-2.949" upper="2.967" velocity="0.829"/\tr \ descrive i limiti di velocità, angolo massimo e minimo ed effort di un giunto;
 \end{itemize}
 Per descrivere il robot utilizzato sono quindi stati definiti sei giunti di rotazione (tre con asse di rotazione lungo l'asse z e tre con asse di rotazione lungo l'asse y) e sette link dalla base del robot fino al centro di presa. Sono stati poi aggiunti un giunto di tipo \textit{fisso} e un link terminale per rappresentare correttamente il centro di presa.
 
@@ -77,7 +77,7 @@ La classe \texttt{KDL::ChainIkSolverPos\_NR\_JL} fornisce il metodo \\
 \texttt{int KDL::ChainIkSolverPos\_NR\_JL::CartToJnt(const JntArray \&\ q\_init, const Frame \&\ p\_in, JntArray \&\	q\_out)} \\ che, data la posizione dell'end-effector tramite il parametro \textit{p\_in}, restituisce i valori dei giunti calcolati nella variabile \textit{q\_out}. Il parametro \textit{q\_init} rappresenta la configurazione iniziale dei giunti dalla quale il metodo iterativo inizia la ricerca della soluzione della cinematica inversa e può influenzare la configurazione finale dei giunti. Il valore intero restituito indica l'esito dell'operazione (zero se il calcolo è andato a buon fine).
 
 \section{Traiettoria lineare} \label{cap_lt}
-La classe \texttt{KDL::Path\_Line}, che estende \texttt{KDL::Path}, permette di creare un oggetto che rappresenta un percorso lineare da una posizione iniziale ad una finale. Di seguito si riporta il costruttore di un oggetto di tipo \texttt{KDL::Path\_Line}: \\ \texttt{Path\_Line (const Frame \&F\_base\_start, const Frame \&F\_base\_end, RotationalInterpolation *orient, double eqradius, bool \_aggregate=true)}.\\ I parametri \texttt{F\_base\_start} e \texttt{F\_base\_end} rappresentano i sistemi di riferimento della posizione iniziale e finale del percorso lineare che si vuole calcolare: in questo progetto coincidono con la posizione iniziale e finale dell'end-effector. Il parametro \textit{orient} di tipo \texttt{KDL::RotationalInterpolation} è utilizzato dalla classe per rappresentare la rotazione associata a un percorso geometrico. La documentazione della libreria suggerisce di inizializzare questo parametro attraverso il metodo \\ \centerline{\texttt{KDL::RotationalInterpolation\_SingleAxis()}} \\ che ha il vantaggio di essere indipendente dal sistema di riferimento nel quale si esprime il percorso. Il parametro \textit{eqradious} è di tipo \texttt{double} e rappresenta l'\textit{equivalent radious}. Questo parametro serve a comparare le rotazioni con le traslazioni, definendo la "quantità di movimento" di una rotazione come lo spazio percorso da un punto a distanza \textit{eqradious} dall'asse di rotazione. Nel progetto, a questo parametro è stato assegnato il valore arbitrario 1. Tuttavia, sviluppi futuri richiederanno di approfondire il valore ottimo da assegnare a questo parametro.
+La classe \texttt{KDL::Path\_Line}, che estende \texttt{KDL::Path}, permette di creare un oggetto che rappresenta un percorso lineare da una posizione iniziale ad una finale. Di seguito si riporta il costruttore di un oggetto di tipo \texttt{KDL::Path\_Line}: \\ \texttt{Path\_Line (const Frame \&F\_base\_start, const Frame \&F\_base\_end, RotationalInterpolation *orient, double eqradius, bool \_aggregate=true)}.\\ I parametri \texttt{F\_base\_start} e \texttt{F\_base\_end} rappresentano i sistemi di riferimento della posizione iniziale e finale del percorso lineare che si vuole calcolare: in questo progetto coincidono con la posizione iniziale e finale dell'end-effector. Il parametro \textit{orient} di tipo \texttt{KDL::RotationalInterpolation} è utilizzato dalla classe per rappresentare la rotazione associata a un percorso geometrico. La documentazione della libreria suggerisce di inizializzare questo parametro attraverso il metodo \\ \centerline{\texttt{KDL::RotationalInterpolation\_SingleAxis()}} \\ che ha il vantaggio di essere indipendente dal sistema di riferimento nel quale si esprime il percorso. Il parametro \textit{eqradious} è di tipo \texttt{double} e rappresenta l'\textit{equivalent radious}. Questo parametro serve a comparare le rotazioni con le traslazioni, definendo la "quantità di movimento" di una rotazione come lo spazio percorso da un punto a distanza \textit{eqradious} dall'asse di rotazione. Nel progetto, si è scelto di assegnare a questo parametro il valore arbitrario 1. Tuttavia, sviluppi futuri richiederanno di approfondire il valore ottimo da assegnare a questo parametro.
 Per il progetto sono stati utilizzati anche i seguenti metodi della classe \texttt{KDL::Path\_Line}:
 \begin{itemize}
 	\item \texttt{double KDL::Path\_Line::PathLength()}: restituisce la lunghezza del percorso. Tuttavia, la lunghezza restituita non è da considerarsi sempre come una lunghezza fisica, ad esempio quando la componente di rotazione è dominante;
@@ -96,7 +96,7 @@ In figura \ref{fig:star_diagram} è riportato il diagramma dei componenti inseri
 \noindent
 Sono stati sviluppati due \textit{Component}:
 \begin{itemize}
-	\item \textit{ArmDriver}: implementa l'attività \textit{JointControlAcivity} che si occupa di comunicare con il robot inviandogli i comandi di movimento e ricevendo la posizione corrente dei giunti, e la \textit{ToolControlActivity} che si occupa di elaborare la traiettoria lineare che l'end-effector dovrà seguire. 
+	\item \textit{ArmDriver}: implementa l'attività \textit{JointControlActivity} che si occupa di comunicare con il robot inviandogli i comandi di movimento e ricevendo la posizione corrente dei giunti, e la \textit{ToolControlActivity} che si occupa di elaborare la traiettoria lineare che l'end-effector dovrà seguire. 
 	\item \textit{ToolInput}: implementa l'attività \textit{ToolInputCommandActivity} che si occupa di inviare la posizione target che il tool deve raggiungere a partire dalla posizione corrente.
 \end{itemize}
 \noindent
@@ -192,7 +192,7 @@ Metodo tramite cui è possibile computare, a partire da un punto iniziale ed un 
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=0.8\linewidth]{./ImageFiles/ComputeLinearTrajectory.drawio.pdf}	\caption{Diagramma di flusso che mostra il funzionamento dell'algoritmo che calcola il percorso lineare.}
+	\includegraphics[width=1\linewidth]{./ImageFiles/ComputeLinearTrajectory.drawio.pdf}	\caption{Diagramma di flusso che mostra il funzionamento dell'algoritmo che calcola il percorso lineare.}
 	\label{fig:algorithm}
 \end{figure}
 \clearpage
@@ -204,7 +204,7 @@ L'attività \textit{JointControlActivity} è una \textit{periodic activity}, che
 
 L'attività \textit{ToolControlActivity} è una \textit{sporadic activity} che riceve la posizione target dell'end-effector sul topic \textit{tool\_command} e lo stato attuale dei giunti sul topic \textit{joint\_state} mentre pubblica la traiettoria calcolata sul topic \textit{joint\_trajectory}. Inoltre, si interfaccia con la \textit{functionality} \texttt{KinematicsInterface} che permette di richiamare le funzioni presenti nel plugin \texttt{PluginArmPRob3Kinematics}. Ogni volta che l'attività riceve lo stato dei giunti dalla \textit{JointControlActivity} li memorizza nella variabile \textit{std::vector\tl double\tr lastJointState}. Invece, quando riceve dal componente \textit{ToolInput} la posizione target dell'end-effector viene richiamata la funzione di callback \texttt{ToolControlActivity::toolCommandCallback (VariantActivity *va)} che si occupa di pubblicare la traiettoria. In particolare, inizialmente viene calcolata la posizione attuale dell'end-effector grazie alla cinematica diretta calcolata a partire dall'ultimo stato dei giunti ricevuto. Se il calcolo va a buon fine e il comando ricevuto richiede il calcolo di una traiettoria lineare, si procede al calcolo del percorso lineare dalla posizione attuale calcolata e la posizione target ricevuta (tramite la funzione \texttt{computeLinearTrajectory}). Se viene calcolato in modo corretto un percorso lineare, si procede alla pubblicazione della traiettoria sul topic \textit{joint\_trajectory}, che sarà poi ricevuta ed eseguita dalla \textit{JointControlActivity}.
 
-Il componente \textit{ToolInput} si occupa invece di indicare all'attività \textit{ToolControlActivity} la posizione target che l'end-effector deve raggiungere e implementa l'attività \textit{ToolInputCommandActivity}.
+Il componente \textit{ToolInput} si occupa invece di inviare all'attività \textit{ToolControlActivity} la posizione target che l'end-effector deve raggiungere e implementa l'attività \textit{ToolInputCommandActivity}.
 
 L'attività \textit{ToolInputCommandActivity} è una \textit{sporadic activity} che si occupa di leggere la proprietà \texttt{ToolEnd} definita nel file di configurazione del componente. Questa proprietà definisce la posizione target dell'end-effector tramite il seguente formato:
 \begin{lstlisting}[language=xml]
